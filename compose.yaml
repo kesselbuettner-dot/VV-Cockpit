@@ -1,0 +1,27 @@
+services:
+  vv-cockpit:
+    build: .
+    image: vv-cockpit:local
+    container_name: vv-cockpit
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Berlin
+      PORT: "3000"
+      VV_ADMIN_PASSWORD: ${VV_ADMIN_PASSWORD:?Bitte in .env setzen}
+      VV_VIEWER_PASSWORD: ${VV_VIEWER_PASSWORD:?Bitte in .env setzen}
+      VV_KASSE_PASSWORD: ${VV_KASSE_PASSWORD:?Bitte in .env setzen}
+      VV_SESSION_SECRET: ${VV_SESSION_SECRET:?Bitte in .env setzen}
+      VV_COOKIE_SECURE: ${VV_COOKIE_SECURE:-true}
+    ports:
+      - "${VV_BIND_IP:-127.0.0.1}:${VV_PORT:-3000}:3000"
+    volumes:
+      - vv_cockpit_data:/app/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,noexec,nosuid
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+volumes:
+  vv_cockpit_data:
